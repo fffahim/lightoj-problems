@@ -1,50 +1,58 @@
 #include<bits/stdc++.h>
 using namespace std;
-int arr[150],c,n;
-vector<int>vec[150],cost[150];
-int dp[150][150];
+int arr[550],n,m,s;
+vector<int>vec[550],cost[550];
+int dp[550][20],check[550][550];
 struct node{
-    int u,w,baki;
-    node(int _u,int _w,int _baki)
+    int u,w,ghursi;
+    node(int _u,int _w,int _ghursi)
     {
         u=_u;
         w=_w;
-        baki=_baki;
+        ghursi=_ghursi;
     }
     bool operator < ( const node& p ) const {      return w > p.w;   }
 };
-int djkstra(int start,int end)
+void djkstra()
 {
     for(int i=0;i<=n;i++)
     {
-        for(int j=0;j<=c;j++) dp[i][j]=1e8+5;
+        for(int j=0;j<=15;j++) dp[i][j]=1e8+5;
     }
     priority_queue<node>p;
-    dp[start][0]=0;
-    p.push(node(start,0,0));
+    if(arr[0]==1)
+    {
+        dp[0][1]=0;
+        p.push(node(0,0,1));
+    }
+    else
+    {
+        dp[0][0]=0;
+        p.push(node(0,0,0));
+    }
     while(!p.empty())
     {
         int u=p.top().u;
         int cos=p.top().w;
-        int baki=p.top().baki;
+        int ghursi=p.top().ghursi;
         p.pop();
-        if(u==end) return cos;
-        for(int j=0;j<=c-baki;j++)
+        for(int i=0;i<vec[u].size();i++)
         {
-            for(int i=0;i<vec[u].size();i++)
+            int v= vec[u][i];
+            if(check[u][v]==-1)
             {
-                int v=vec[u][i];
-                int dorker= cost[u][i];
-                if(baki+j<dorker) continue;
-                if(dp[v][baki+j-dorker]>cos+(j*arr[u]) )
+                check[u][v]=0;
+                int vw= cost[u][i]+cos;
+                int vghursi= ghursi+arr[v];
+                if(vghursi>s) vghursi=s;
+                if(dp[v][vghursi]> vw )
                 {
-                    dp[v][baki+j-dorker]=cos+(j*arr[u]);
-                    p.push(node(v,dp[v][baki+j-dorker],baki+j-dorker));
+                    dp[v][vghursi]=vw;
+                    p.push(node(v,vw,vghursi));
                 }
             }
-        }      
+        }    
     }
-    return 1e8+5;
 }
 int main()
 {
@@ -54,33 +62,39 @@ int main()
     scanf("%d",&t);
     for(int k=1;k<=t;k++)
     {
-        int m;
-        scanf("%d %d",&n,&m);
-        for(int i=0;i<n;i++) scanf("%d",&arr[i]);
-        for(int i=0;i<m;i++)
-        {
-            int u,v,w;
-            scanf("%d %d %d",&u,&v,&w);
-            vec[u].push_back(v);
-            vec[v].push_back(u);
-            cost[u].push_back(w);
-            cost[v].push_back(w);
-        }
-        printf("Case %d:\n",k);
-        int q;
-        scanf("%d", &q);
-        while(q--)
-        {
-            int s,e;
-            scanf("%d %d %d",&c,&s,&e);
-            int ans=djkstra(s,e);
-            if(ans<1e8+5) printf("%d\n",ans);
-            else printf("impossible\n");
-        }
+        scanf("%d %d %d", &n, &m, &s);
         for(int i=0;i<=n;i++)
         {
             vec[i].clear();
             cost[i].clear();
+            arr[i]=0;
+            for(int j=0;j<=n;j++) check[i][j]=-1;
         }
+        for(int i=0;i<s;i++)
+        {
+            int x;
+            cin>>x;
+            arr[x]=1;
+        }
+        for(int i=0;i<m;i++)
+        {
+            int u,v,w;
+            cin>>u>>v>>w;
+            vec[u].push_back(v);
+            cost[u].push_back(w);
+        }
+        djkstra();
+        int flag=0;
+        cout<<"Case "<<k<<": ";
+        for(int i=s;i>=0;i--)
+        {
+            if(dp[n-1][i]!=1e8+5)
+            {
+               cout<<i<<" "<<dp[n-1][i]<<endl;
+               flag=1;
+               break;
+            }
+        }
+        if(flag==0) cout<<"Impossible\n";
     }
 }
