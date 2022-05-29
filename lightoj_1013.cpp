@@ -3,6 +3,7 @@ using namespace std;
 char str1[100],str2[100];
 int len1,len2,dp[100][100],fin;
 long long int dp2[100][100][100];
+
 int lcs(int i,int j)
 {
     if(i>=len1 || j>=len2) return 0;
@@ -20,6 +21,7 @@ int lcs(int i,int j)
     }
     return dp[i][j]=ans;
 }
+
 long long int func(int i,int j,int countn)
 {
     if(i>=len1 || j>=len2)
@@ -46,6 +48,7 @@ long long int func(int i,int j,int countn)
     }
     return dp2[i][j][countn]=ans;
 }
+
 int main()
 {
     int t;
