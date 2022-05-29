@@ -51,7 +51,7 @@ long long int func(int i,int j,int countn)
 
 int main()
 {
-    int t;
+    int t, test;
     cin>>t;
     for(int tt=1;tt<=t;tt++)
     {
